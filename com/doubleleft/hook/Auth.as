@@ -10,20 +10,20 @@ package com.doubleleft.hook
 		protected var client : Client;
 		public var currentUser : Object = null;
 
-		protected static var AUTH_DATA_KEY : String = "hook-auth-data";
-		protected static var AUTH_TOKEN_KEY : String = "hook-auth-token";
-		protected static var AUTH_TOKEN_EXPIRATION : String = "hook-auth-token-expiration";
+		protected var localStorage : SharedObject;
 
-		public static var ON_LOGIN = "hookLogin";
-		public static var ON_LOGOUT = "hookLogout";
+		public static var ON_LOGIN : String = "hookLogin";
+		public static var ON_LOGOUT : String = "hookLogout";
 
 		public function Auth(client : Client)
 		{
 			this.client = client;
 
+			this.localStorage = SharedObject.getLocal("hook" + this.client.app_id);
+
 			var now : Date = new Date(),
-					tokenExpiration : Date = new Date(window.localStorage.getItem(this.client.app_id + "-" + AUTH_TOKEN_EXPIRATION)),
-					currentUser : String = window.localStorage.getItem(this.client.app_id + "-" + AUTH_DATA_KEY);
+					tokenExpiration : Date = new Date(this.localStorage.data.tokenExpiration),
+					currentUser : String = this.localStorage.data.currentUser;
 
 			// Fill current user only when it isn't expired yet.
 			if (currentUser != null && now.getTime() < tokenExpiration.getTime()) {
@@ -34,7 +34,7 @@ package com.doubleleft.hook
 
 		public function getToken() : String
 		{
-			return window.localStorage.getItem(this.client.app_id + "-" + AUTH_TOKEN_KEY);
+			return this.localStorage.data.authToken;
 		}
 
 		public function register(data : Object) : Request
@@ -98,10 +98,10 @@ package com.doubleleft.hook
 				this.dispatchEvent(new Event(ON_LOGOUT));
 				this.currentUser = data;
 
-				window.localStorage.removeItem(this.client.app_id + "-" + AUTH_TOKEN_KEY);
-				window.localStorage.removeItem(this.client.app_id + "-" + AUTH_DATA_KEY);
+				this.localStorage.setProperty("authToken", null);
+				this.localStorage.setProperty("currentUser", null)
 			} else {
-				window.localStorage.setItem(this.client.app_id + "-" + AUTH_DATA_KEY, (new JSONEncoder(data).getString()));
+				this.localStorage.setProperty("currentUser", (new JSONEncoder(data).getString()));
 
 				// trigger login event
 				this.currentUser = data;
@@ -111,8 +111,17 @@ package com.doubleleft.hook
 			return this;
 		}
 
-		protected function registerToken(data : Object)
+		protected function registerToken(data : Object) : void
 		{
+			if (data.token) {
+				// register authentication token on localStorage
+				this.localStorage.setProperty("authToken", data.token.token);
+				this.localStorage.setProperty("tokenExpiration", data.token.expire_at);
+				delete data.token;
+
+				// Store curent user
+				this.setCurrentUser(data);
+			}
 		}
 
 		protected function onAuthUpdate(evt : ResponseEvent) : void {
