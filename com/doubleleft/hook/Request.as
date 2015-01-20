@@ -1,5 +1,6 @@
 package com.doubleleft.hook
 {
+	import com.adobe.serialization.json.*;
 	import flash.events.*;
 	import flash.net.*;
 
@@ -11,7 +12,7 @@ package com.doubleleft.hook
 		public function Request(method : String, url : String , data : Object = null, headers : Array = null)
 		{
 			var variables : URLVariables = new URLVariables();
-			/* variables.data = JSON.encode(data); */
+			variables.data = (new JSONEncoder(data).getString());
 
 			this.request = new URLRequest();
 			this.request.data = variables;
@@ -30,7 +31,7 @@ package com.doubleleft.hook
 
 		protected function handleComplete(evt : HTTPStatusEvent) : void
 		{
-			var data : Object = JSON.parse(this.loader.data);
+			var data : Object = (new JSONDecoder(this.loader.data, true).getValue());
 
 			if (evt.status < 400) {
 				this.dispatchEvent(new ResponseEvent(ResponseEvent.SUCCESS, data));

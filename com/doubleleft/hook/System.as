@@ -10,7 +10,7 @@ package com.doubleleft.hook
 			this.client = client;
 		}
 
-		public function time(name : String)
+		public function time(name : String) : Request
 		{
 			return this.client.get("system/time");
 		}

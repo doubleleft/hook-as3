@@ -10,12 +10,12 @@ package com.doubleleft.hook
 			this.client = client;
 		}
 
-		public function get(name : String)
+		public function get(name : String) : Request
 		{
 			return this.client.get("key/" + name);
 		}
 
-		public function set(name : String, value : Object)
+		public function set(name : String, value : Object) : Request
 		{
 			return this.client.post("key/" + name, value);
 		}
@@ -23,6 +23,3 @@ package com.doubleleft.hook
 	}
 
 }
-
-
-
