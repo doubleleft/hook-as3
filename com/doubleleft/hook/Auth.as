@@ -1,6 +1,8 @@
 package com.doubleleft.hook
 {
+	import flash.events.*;
 	import flash.net.SharedObject;
+
 	import com.adobe.serialization.json.*;
 
 	public class Auth extends EventDispatcher
@@ -21,7 +23,7 @@ package com.doubleleft.hook
 
 			var now : Date = new Date(),
 					tokenExpiration : Date = new Date(window.localStorage.getItem(this.client.app_id + "-" + AUTH_TOKEN_EXPIRATION)),
-					currentUser : Object = window.localStorage.getItem(this.client.app_id + "-" + AUTH_DATA_KEY);
+					currentUser : String = window.localStorage.getItem(this.client.app_id + "-" + AUTH_DATA_KEY);
 
 			// Fill current user only when it isn't expired yet.
 			if (currentUser != null && now.getTime() < tokenExpiration.getTime()) {
@@ -35,14 +37,14 @@ package com.doubleleft.hook
 			return window.localStorage.getItem(this.client.app_id + "-" + AUTH_TOKEN_KEY);
 		}
 
-		public function register(data : Object = {}) : Request
+		public function register(data : Object) : Request
 		{
 			var req : Request = this.client.post("auth/email", data);
 			req.addEventListener(ResponseEvent.SUCCESS, this.onLoginOrRegister);
 			return req;
 		}
 
-		public function login(data : Object = {}) : Request
+		public function login(data : Object) : Request
 		{
 			var req : Request = this.client.post("auth/email/login", data);
 			req.addEventListener(ResponseEvent.SUCCESS, this.onLoginOrRegister);
@@ -77,8 +79,8 @@ package com.doubleleft.hook
 				/* data.token = (data.token && data.token[1]); */
 			}
 
-			if (!(data.token is "string")) { throw new Error("forgot password token required. Remember to use 'auth.forgotPassword' before 'auth.resetPassword'."); }
-			if (!(data.password is "string")) { throw new Error("new password required."); }
+			if (!(data.token is String)) { throw new Error("forgot password token required. Remember to use 'auth.forgotPassword' before 'auth.resetPassword'."); }
+			if (!(data.password is String)) { throw new Error("new password required."); }
 
 			return this.client.post("auth/email/resetPassword", data);
 		}
@@ -119,7 +121,7 @@ package com.doubleleft.hook
 		}
 
 		protected function onLoginOrRegister(evt : ResponseEvent) : void {
-			this._registerToken(data);
+			this.registerToken(evt.data);
 			evt.target.removeEventListener(ResponseEvent.SUCCESS, this.onLoginOrRegister);
 		}
 

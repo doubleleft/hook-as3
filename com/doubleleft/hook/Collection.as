@@ -243,6 +243,36 @@ package com.doubleleft.hook
 			return query;
 		}
 
+		public function onSuccess(callback: Function) : Request {
+			var req : Request = this.get(),
+					success : Function = function(evt : ResponseEvent) : void {
+						callback(evt);
+						req.removeEventListener(ResponseEvent.SUCCESS, success);
+					};
+			req.addEventListener(ResponseEvent.SUCCESS, success);
+			return req;
+		}
+
+		public function onComplete(callback: Function) : Request {
+			var req : Request = this.get(),
+					success : Function = function(evt : ResponseEvent) : void {
+						callback(evt);
+						req.removeEventListener(ResponseEvent.COMPLETE, success);
+					};
+			req.addEventListener(ResponseEvent.COMPLETE, success);
+			return req;
+		}
+
+		public function onError(callback: Function) : Request {
+			var req : Request = this.get(),
+					success : Function = function(evt : ResponseEvent) : void {
+						callback(evt);
+						req.removeEventListener(ResponseEvent.ERROR, success);
+					};
+			req.addEventListener(ResponseEvent.ERROR, success);
+			return req;
+		}
+
 	}
 
 }
