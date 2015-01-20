@@ -1,5 +1,6 @@
 package com.doubleleft.hook
 {
+	import flash.events.*;
 	import flash.net.*;
 
 	public class Request extends EventDispatcher
@@ -7,15 +8,20 @@ package com.doubleleft.hook
 		protected var request : URLRequest;
 		protected var loader : URLLoader;
 
-		public function Request(method : URLRequestMethod, url : String , data : Object = null, headers : Object = null)
+		public function Request(method : String, url : String , data : Object = null, headers : Array = null)
 		{
 			var variables : URLVariables = new URLVariables();
-			variables.data = JSON.encode(data);
+			/* variables.data = JSON.encode(data); */
 
 			this.request = new URLRequest();
-			this.request.requestHeaders = headers;
 			this.request.data = variables;
 			this.request.url = url;
+
+			// request headers
+			for (var i : uint = 0; i<headers.length; i++)
+			{
+				this.request.requestHeaders.push(headers[i]);
+			}
 
 			this.loader = new URLLoader();
 			this.loader.load(this.request);

@@ -10,7 +10,7 @@ package com.doubleleft.hook
 		public var key : String;
 		public var endpoint : String;
 
-		public var key : KeyValue;
+		public var keys : KeyValue;
 		public var auth : Auth;
 		public var system : System;
 
@@ -20,32 +20,32 @@ package com.doubleleft.hook
 			this.key = key;
 			this.endpoint = endpoint;
 
-			this.key = new KeyValue(this);
+			this.keys = new KeyValue(this);
 			this.auth = new Auth(this);
 			this.system = new System(this);
 		}
 
-		public function collection(name : String)
+		public function collection(name : String) : Collection
 		{
 			return new Collection(this, name);
 		}
 
-		public function post(segments : String , data : Object = null)
+		public function post(segments : String , data : Object = null) : Request
 		{
 			return this.request(URLRequestMethod.POST, segments, data);
 		}
 
-		public function put(segments : String , data : Object = null)
+		public function put(segments : String , data : Object = null) : Request
 		{
 			return this.request(URLRequestMethod.PUT, segments, data);
 		}
 
-		public function get(segments : String , data : Object = null)
+		public function get(segments : String , data : Object = null) : Request
 		{
 			return this.request(URLRequestMethod.GET, segments, data);
 		}
 
-		public function remove(segments : String , data : Object = null)
+		public function remove(segments : String , data : Object = null) : Request
 		{
 			return this.request(URLRequestMethod.DELETE, segments, data);
 		}
@@ -57,7 +57,7 @@ package com.doubleleft.hook
 
 		protected function getHeaders() : Array
 		{
-			var headers = new Array();
+			var headers : Array = new Array();
 			headers.push(new URLRequestHeader("X-App-Id", this.app_id));
 			headers.push(new URLRequestHeader("X-App-Key", this.key));
 

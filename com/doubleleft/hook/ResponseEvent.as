@@ -1,5 +1,7 @@
 package com.doubleleft.hook
 {
+	import flash.events.Event;
+
 	public class ResponseEvent extends Event
 	{
 		public static var SUCCESS : String = "responseSuccess";

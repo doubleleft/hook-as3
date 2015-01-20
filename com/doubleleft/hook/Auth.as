@@ -5,9 +5,9 @@ package com.doubleleft.hook
 	{
 		protected var client : Client;
 
-		protected static AUTH_DATA_KEY = "hook-auth-data";
-		protected static AUTH_TOKEN_KEY = "hook-auth-token";
-		protected static AUTH_TOKEN_EXPIRATION = "hook-auth-token-expiration";
+		protected static var AUTH_DATA_KEY : String = "hook-auth-data";
+		protected static var AUTH_TOKEN_KEY : String = "hook-auth-token";
+		protected static var AUTH_TOKEN_EXPIRATION : String = "hook-auth-token-expiration";
 
 		public function Auth(client : Client)
 		{
